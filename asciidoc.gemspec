@@ -1,0 +1,3 @@
+begin
+	require 'asciidoctor'
+end

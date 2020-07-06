@@ -1,0 +1,367 @@
+:imagesdir: ./images
+:iconsdir: ./icons
+:stylesdir: ./styles
+:scriptsdir: ./js
+
+= Creating and Running OCI Containers
+David Sanchez <divad_dad@hotmail.com>
+v1.0, 01.07.2020: First review
+:description: A chapter OCI containers.
+:toc:
+:toc-title: Contents
+:icons: font
+:source-highlighter: coderay
+
+[abstract]
+The objective of this chapter is that the student understands the basic concepts of the Open Container Initiative (OCI), Buildah, Podman and Runc. This concepts will set the basis on how containers are created, deployed and run using this tools.
+
+== The Open Container Initiative
+
+=== Introduction
+
+The Open Container Initiative or OCI defines an open source initiative for container runtime and image specifications. The initiative dates back to 2015, it was stablished by Docker and other leaders in the containers industry, nowadays it is supported by the Linux Foundation.
+
+This initiative is relevant for the reason that it was first stablished to set a base for container standards definition. As other industry standards such as HTTP it is build on top of open source.
+
+The initiative is made up to two main elements:
+
+* The Runtime Specification
+* The Image Specification
+
+The general structure of a workflow is as follows:
+
+[ditaa, 'workflow']
+....
+     +-------------+
+     |  OCI Image  |
+     |  Download   |
+     +-------------+          
+            |
+            | 
+            v
++------------------------+
+|     Unpack into an     |
+|       OCI Runtime      |
+|    filesystem bundle   |
++------------------------+
+            |
+            | 
+            v
+     +-------------+     +-----------------+     +---------------+
+     | OCI Runtime |     |                 |     |  Running OCI  |
+     |   bundle    |---->|   OCI Runtime   |---->|   container   |
+     |     {d}     |     |                 |     |        {d}    |
+     +----+--------+     +-----------------+     +----+----------+
+....
+
+In this diagram the build system is responsible of using the information from the OCI image format on how to create the OCI image, the build system will return the following elements and subelements:
+
+OCI Image:
+
+* Image configuration
+** Application arguments
+** Environments
+* Image manifest
+** Metadata from:
+*** Dependencies
+*** Contents
+** Filesystem serialization archive's addressable identity.
+* Filesystem serialization
+
+This workflow contains all the required information for the user to run a command without arguments in the CLI just as running a Docker or CoreOS command.
+
+In the following sections the specifications require for both the runtime and the image will be detailed so that at the end of this chapter the student knows the basic information to specify an OCI container image and runtime.
+
+=== Runtime Specification
+
+The Runtime Specification or runtime-spec contains the definition on how to run a filesystem.
+
+TIP: The filesystem is in a bundle which means that it needs to be unpacked.
+
+The components of the runtime-spec are:
+
+* Execution environment
+* Lifecycle of a container
+* Configruration
+
+The name of the file that specifies this elements is the config.json. 
+
+=== Image Format Specification
+
+This is the description on how to create the necessary set of tools for container image build, transport and preparation so it can run under the runtime specification.
+
+The image format specification or image-spec is made up of the elements in the following table:
+
+[cols="3,7",options=header]
+|===
+|Element
+|Description
+
+|Manifest
+|Contains each one of the elements that the image-spec is made of. (i.e. The elements in this list).
+
+|Configuration
+|Contains the definition of the image and the description of the order in the layers.
+
+|Filesystem Layer(s)
+|Is the description of the filesystem of the container including the changes of the filesystem.
+
+|Image index
+|Is the list on the image manifest(s).
+
+|Layout
+|Is the description of the layout of the elements of the container image.
+
+|Filesystem Layer(s)
+|Is the description of the filesystem of the container including the changes of the filesystem.
+
+|Descriptor
+|As it name says, it is the element that describes the information such as type, the metadata related to it and the address of the references.
+
+|Conversor
+|Describes the processes of translation.
+|===
+
+== Tools
+
+=== Buildah
+
+This chapter's sections is an overview of the Buildah tool.
+
+Buildah is an open source tool created for building OCI container images. This means that the tool uses the image-spec definition from and OCI image.
+
+NOTE: Buildah supports Docker based image build. This characteristic makes it posible to run in a Docker environment a Buildah builded OCI container image. This compatibility turns OCI and it's set of tools into a very powerful way of defining container images and it also comes with a lot of flexibility.
+
+=== Podman
+
+This chapter's sections is an overview of the Podman tool.
+
+Podman is another great tool in the OCI environments. It can be used through the CLI to manage the building, distribution, sharing, depliyment and running applications based on OCI containers.
+
+NOTE: A great advantage of Podman is that it uses similar commands, command's arguments and options as Docker, which means that podman and docker commands are replaceble when managing container images.
+
+WARNING: Podman is made for Linux so it only runs on Linux! Windows or Mac users can take advantage of the RESTful remote client to explode Podman's capabilities.
+
+Podman controls the OCI container environment including:
+
+* Pods
+* Container images
+* Containers
+* Volumes
+
+== Comparison between Buildah and Dockerfile
+
+As we can deduce Docker, Buildah and Podman have all the same or pretty similar functionality and characteristics, let's checkout what are the differences between Buildah and Docker to get a general overview of both of them.
+
+[cols=3*,options=header]
+|===
+|Feature |Buildah |Docker
+
+|Compatibility
+|Builds and runs OCI and Docker compliant container images.
+|Only runs Docker compliant images.
+
+|Container runtime daemon
+|Not needed.
+|Needed.
+
+|Root user
+|Not needed.
+|Needed.
+
+|Dockerfile cache
+|Not supported.
+|Supported.
+
+|Script the container in Bash
+|Supported.
+|Not supported.
+
+|OpenShift Source-to-Image (S2I)
+|Supported.
+|Not supported.
+|===
+
+As part of this comparison there is algo a difference between Buildah and Podman and it is that Podman implemets contenerization the same way as Docker in the good all fashion for applications that will be maintained and managed in a mid to long time period, while Buildah will let the user build easily and also fast OCI container images. This explain why the comparison is limited to Docker and Buildah.
+
+=== Container build
+
+Enough theory, let's go to action...
+
+This sections decribes how to build and run containers in both Docker and Buildah, it also considers that the build and run will be done in a Linux environment. The following guidelines were executed on a Ubuntu 18.04 LTS (Bionic Beaver) version.
+
+==== With Docker
+
+To use Docker the first thing to to is to setup the Docker environment as described in the official documentation in the https://docs.docker.com/get-started/[link] <<dgs>>.
+
+As prerrequisites for using Docker follow the steps, otherwise jump directly to the Docker CLI installation.
+
+[source]
+----
+docker --version #<1>
+
+sudo apt-get remove docker docker-engine docker.io containerd runc #<2>
+
+sudo apt-get install \
+software-properties-common \
+apt-transport-https \
+ca-certificates \
+gnupg-agent #<3>
+
+----
+
+<1> Validate that Docker exists in the computer by running: 
+<2> If you are not sure or if the version installed in the computer is old run the following command to uninstall previous versions of Docker.
+<3> Install base communication and security packages required by the Docker engine.
+
+As previously stablished Docker requires a daemon to be running in the machine, the Docker daemon is the dockerd or Docker Engine, this daemon needs to be running for the docker commands to execute from the CLI.
+
+There are two ways of install Docker one is by using a DEB package and running it or by configuring the Docker repository and installing from the command line which is described here, here it is described how to do it using the CLI and the official Docker repository:
+
+[source]
+----
+sudo apt-get update #<1>
+
+sudo apt-get install curl #<2>
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - #<3>
+
+sudo add-apt-repository \
+"deb [OPTION] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" #<4>
+
+sudo apt-get update #<5>
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io #<6>
+
+sudo docker run hello-world #<7>
+----
+
+<1> Through official Docker repository, start by running an update.
+<2> To get the repository key in this settings it is used the curl command, if you do not have it installed in your computer run the command below, otherwise jump this step.
+<3> Add the GPG from Docker.
+<4> Once the key is intalled, the next step is to set the Docker repository, there are three different supported CPU architectures supported by the Docker engine. It is important to replace the word [OPTION] inside the brackets in the command for one of the following options: `arch=amd64`, `arch=armhf` or `arch=arm64` that corresponds to the computer.
+<5> Run the update command.
+<6> Install Docker engine.
+<7> Run this command to verify that Docker has installed correctly.
+
+For building and running container images in Docker there are two commands `docker build` and `docker run` respectively.
+
+When Docker builds a container image it takes the Dockerfile and a set of other files also known as context. The Docker build command can use the context files as a reference. The Dockerfile specifies the assembly of the filesystem for the container image and optional metadata describing the way it must be runned.
+
+When `docker build` is executed a new container is created to process the Dockerfile, this creates new metadata.
+
+The fastest way to go on on building and running a Docker container is to use a _Hello World!_ approach. To do this follow the steps bellow:
+
+First, validate that Docker daemon is running and it is working. You should see a message like the in the image.
+
+----
+sudo docker run hello-world
+----
+
+image::docker_hello_world.png[Docker Hello World]
+
+Then, the docker build and docker run commands will be used to run a sample application that can be used in a web browser.
+
+----
+git clone https://github.com/dockersamples/linux_tweet_app.git #<1>
+
+cd linux_tweet_app/ #<2>
+
+sudo docker build -t linux_tweet_app . #<3>
+
+sudo docker container run --detach -p 80:80 linux_tweet_app #<4>
+----
+
+<1> For this sample the easiest way to get started is with an application and it's Dockerfile. This is not a Hands on Lab, this is to demostrate how Docker container application is builded and runned, so what is needed to do is to have an application in the fist place. A sample application available in the Docker Samples GitHub site <<di>> is used as a container application. First, clone the application from the Git repository, make sure to do this in a new directory.
+<2> Access to the cloned project folder. You will see the application files and the Dockerfile.
+<3> Build the image from the sample. This command has an option named tag, this option is used to give name to the container image but also define the version, the version goes after the ':'.
+<4> Run the image. This command uses the option "--detach" that indicates that de container exits at the same time that the process used to run the container exists as described in the docker run command documentation <<rundocs>>. This command also has the "-p" option indicating that the port 80 is open for the linux_tweet_app container.
+
+Go to http://localhost:80 to view the running application.
+
+==== With Buildah
+
+There is a difference is that it is not a daemon as Docker or Podman and when building Buildah the user has the opportunity to create an empty image and start from zero instead of creating an image based on another container, this also means reduced image size, increased security because it does not packages default libraries, as described in the Red Hat Documentation for Buidah.<<rhdocs>>
+
+Buildah installation varies between Linux distributions which can be found in in the Buildah installation reference <<bir>>.
+
+For this chapter the installation instructions will focus on Ubuntu 18.04. 
+
+The following commands will guide you through the process of installation of buildah.
+
+----
+. /etc/os-release <1>
+
+sudo sh -c "echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/x${ID^}_${VERSION_ID}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list" #<2>
+
+wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${ID^}_${VERSION_ID}/Release.key -O Release.key
+
+sudo apt-key add - < Release.key
+
+sudo apt-get update -qq
+
+sudo apt-get -qq -y install buildah
+----
+
+<1> Get the release of the Operating System that will be used in the following commands.
+<2> Get the latest release of buildah.
+<3> Get the key for the repository.
+<4> Add the key.
+<5> Update.
+<6> Install buildah.
+
+Once buildah is install the next steps are going to be on how to build and run the linux_tweet_app.
+
+What is needed to do now is the check if the container from the Docker run revious steps is running, to stop a container run the following Docker commands:
+
+----
+sudo docker ps #<1>
+
+sudo docker container stop <CONTAINER_NAME> #<2>
+----
+
+<1> Identify the name of your container.
+<2> Stop that container.
+
+Then, navigate to the directory where the application is located and run the following commands to build and run the application image.
+
+----
+buildah build-using-dockerfile -t linux_tweet . #<1>
+
+sudo buildah push linux_tweet:latest docker-daemon:linux_tweet:latest #<2>
+
+sudo docker run --detach -p 80:80 linux_tweet #<3>
+----
+
+<1> If you run buildah the first thing to notice is that there is no "build" command, instead there is the build-using-dockerfile which is the same than using the bud command. The second thing that you may notice is that the privileged used permission is not required as it is in Docker.
+<2> Podman or Docker can be used to run de image. To run the image just created using buildah the image needs to be copied to the Docker daemon.
+<3> Run the buildah image using a Docker container.
+
+Go to http://localhost:80 to view the running application.
+
+NOTE: RunC is the container format and runtime provided by Docker as the base for the OCI. And it is also used by buildah when the buildah run command is used.
+
+This is the end of this chapter, hope you enjoyed it. This may have helped you understand a little about OCI containers, container images and tools for images building and running.
+
+[bibliography]
+== References
+
+- [[[dgs,1]]] Getting Started. Official Docker documentation. 2020. Available at: https://docs.docker.com/
+- [[[di, 2]]] dockersamples. Docker 101 Tutorial. 2020. Available at: https://github.com/dockersamples/linux_tweet_app
+- [[[rundocs, 3]]] Docker run reference. Docker Docs. 2020. Available at: https://docs.docker.com/engine/reference/run/#detached-vs-foreground
+- [[[rhdocs, 4]]] Chapter 6. Building container images with Buildah. Red Hat Customer Portal. 2020. Available at: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/building_running_and_managing_containers/building-container-images-with-buildah_building-running-and-managing-containers
+- [[[rundocs, 5]]] Installation Instructions. buildah. GitHub. 2020. Available at: https://github.com/containers/buildah/blob/master/install.md
+- About the Open Container Initiative. From the Linux Foundation. 2020. Available at: https://opencontainers.org/about/overview/
+- Stephen Walli. Demystifying the Open Container Initiative (OCI) Specifications. docker blog. 2017. Available at: https://www.docker.com/blog/demystifying-open-container-initiative-oci-specifications/
+- opencontainers.org. OCI Image Format. 2020. Available at: https://github.com/opencontainers/image-spec
+- opencontainers.org. OCI Runtime Specification. 2020. Available at: https://github.com/opencontainers/runtime-spec
+- Buildah Docs Tutorial. 2020. Available at: https://github.com/containers/buildah/tree/master/docs/tutorials
+- Podman Documentation. 2020. Available at: https://podman.readthedocs.io/en/latest/index.html
+- Akihiro Suda. Comparing Next-Generation Container Image Building Tools. NTT. 2018. Available at: https://events19.linuxfoundation.org/wp-content/uploads/2017/11/Comparing-Next-Generation-Container-Image-Building-Tools-OSS-Akihiro-Suda.pdf
+- Daniel J. Wash. How rootless Buildah works: Building containers in unprivileged environments. opensource.com. 2019. Available at: https://opensource.com/article/19/3/tips-tricks-rootless-buildah
+- Docker Docs. 2020. Available at: https://docs.docker.com/get-started/
+- Docker Tutorial for Beginners. Guru99. 2020. Available at: https://www.guru99.com/docker-tutorial.html
+- Develop with Docker. Docker docs. 2020. Available at: https://docs.docker.com/develop/
+- Install Docker on Ubuntu. Docker Docs. 2020. Available at: https://docs.docker.com/engine/install/ubuntu/#install-from-a-package
+- Orientation and setup. Docker Docs. 2020. Available at: https://docs.docker.com/get-started/
+- Build and run your image. Docker Docs. 2020. Available at: https://docs.docker.com/get-started/
