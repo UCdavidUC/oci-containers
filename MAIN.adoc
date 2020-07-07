@@ -13,13 +13,13 @@ v1.0, 01.07.2020: First review
 :source-highlighter: coderay
 
 [abstract]
-The objective of this chapter is that the student understands the basic concepts of the Open Container Initiative (OCI), Buildah, Podman and Runc. This concepts will set the basis on how containers are created, deployed and run using this tools.
+The objective of this chapter is that the student understands the basic concepts of the Open Container Initiative (OCI), Buildah, Podman and RunC. This concepts will set the basis on how containers are created, deployed and run using this tools.
 
 == The Open Container Initiative
 
 === Introduction
 
-The Open Container Initiative or OCI defines an open source initiative for container runtime and image specifications. The initiative dates back to 2015, it was stablished by Docker and other leaders in the containers industry, nowadays it is supported by the Linux Foundation.
+The Open Container Initiative or OCI defines an open source initiative for container runtime and image specifications. The initiative dates back to 2015, it was established by Docker and other leaders in the containers industry, nowadays it is supported by the Linux Foundation.
 
 This initiative is relevant for the reason that it was first stablished to set a base for container standards definition. As other industry standards such as HTTP it is build on top of open source.
 
@@ -130,7 +130,7 @@ This chapter's sections is an overview of the Buildah tool.
 
 Buildah is an open source tool created for building OCI container images. This means that the tool uses the image-spec definition from and OCI image.
 
-NOTE: Buildah supports Docker based image build. This characteristic makes it posible to run in a Docker environment a Buildah builded OCI container image. This compatibility turns OCI and it's set of tools into a very powerful way of defining container images and it also comes with a lot of flexibility.
+NOTE: Buildah supports Docker based image build. This characteristic makes it posible to run in a Docker environment a Buildah built OCI container image. This compatibility turns OCI and it's set of tools into a very powerful way of defining container images and it also comes with a lot of flexibility.
 
 === Podman
 
@@ -246,7 +246,7 @@ sudo docker run hello-world #<7>
 
 For building and running container images in Docker there are two commands `docker build` and `docker run` respectively.
 
-When Docker builds a container image it takes the Dockerfile and a set of other files also known as context. The Docker build command can use the context files as a reference. The Dockerfile specifies the assembly of the filesystem for the container image and optional metadata describing the way it must be runned.
+When Docker builds a container image it takes the Dockerfile and a set of other files also known as context. The Docker build command can use the context files as a reference. The Dockerfile specifies the assembly of the filesystem for the container image and optional metadata describing the way it must be run.
 
 When `docker build` is executed a new container is created to process the Dockerfile, this creates new metadata.
 
@@ -272,7 +272,7 @@ sudo docker build -t linux_tweet_app . #<3>
 sudo docker container run --detach -p 80:80 linux_tweet_app #<4>
 ----
 
-<1> For this sample the easiest way to get started is with an application and it's Dockerfile. This is not a Hands on Lab, this is to demostrate how Docker container application is builded and runned, so what is needed to do is to have an application in the fist place. A sample application available in the Docker Samples GitHub site <<di>> is used as a container application. First, clone the application from the Git repository, make sure to do this in a new directory.
+<1> For this sample the easiest way to get started is with an application and it's Dockerfile. This is not a Hands on Lab, this is to demostrate how Docker container application is built and run, so what is needed to do is to have an application in the fist place. A sample application available in the Docker Samples GitHub site <<di>> is used as a container application. First, clone the application from the Git repository, make sure to do this in a new directory.
 <2> Access to the cloned project folder. You will see the application files and the Dockerfile.
 <3> Build the image from the sample. This command has an option named tag, this option is used to give name to the container image but also define the version, the version goes after the ':'.
 <4> Run the image. This command uses the option "--detach" that indicates that de container exits at the same time that the process used to run the container exists as described in the docker run command documentation <<rundocs>>. This command also has the "-p" option indicating that the port 80 is open for the linux_tweet_app container.
@@ -294,13 +294,13 @@ The following commands will guide you through the process of installation of bui
 
 sudo sh -c "echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/x${ID^}_${VERSION_ID}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list" #<2>
 
-wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${ID^}_${VERSION_ID}/Release.key -O Release.key
+wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${ID^}_${VERSION_ID}/Release.key -O Release.key #<3>
 
-sudo apt-key add - < Release.key
+sudo apt-key add - < Release.key #<4>
 
-sudo apt-get update -qq
+sudo apt-get update -qq #<5>
 
-sudo apt-get -qq -y install buildah
+sudo apt-get -qq -y install buildah #<6>
 ----
 
 <1> Get the release of the Operating System that will be used in the following commands.
@@ -350,7 +350,7 @@ This is the end of this chapter, hope you enjoyed it. This may have helped you u
 - [[[di, 2]]] dockersamples. Docker 101 Tutorial. 2020. Available at: https://github.com/dockersamples/linux_tweet_app
 - [[[rundocs, 3]]] Docker run reference. Docker Docs. 2020. Available at: https://docs.docker.com/engine/reference/run/#detached-vs-foreground
 - [[[rhdocs, 4]]] Chapter 6. Building container images with Buildah. Red Hat Customer Portal. 2020. Available at: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/building_running_and_managing_containers/building-container-images-with-buildah_building-running-and-managing-containers
-- [[[rundocs, 5]]] Installation Instructions. buildah. GitHub. 2020. Available at: https://github.com/containers/buildah/blob/master/install.md
+- [[[bir, 5]]] Installation Instructions. buildah. GitHub. 2020. Available at: https://github.com/containers/buildah/blob/master/install.md
 - About the Open Container Initiative. From the Linux Foundation. 2020. Available at: https://opencontainers.org/about/overview/
 - Stephen Walli. Demystifying the Open Container Initiative (OCI) Specifications. docker blog. 2017. Available at: https://www.docker.com/blog/demystifying-open-container-initiative-oci-specifications/
 - opencontainers.org. OCI Image Format. 2020. Available at: https://github.com/opencontainers/image-spec

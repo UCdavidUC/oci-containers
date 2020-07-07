@@ -479,7 +479,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-The objective of this chapter is that the student understands the basic concepts of the Open Container Initiative (OCI), Buildah, Podman and Runc. This concepts will set the basis on how containers are created, deployed and run using this tools.
+The objective of this chapter is that the student understands the basic concepts of the Open Container Initiative (OCI), Buildah, Podman and RunC. This concepts will set the basis on how containers are created, deployed and run using this tools.
 </blockquote>
 </div>
 </div>
@@ -490,7 +490,7 @@ The objective of this chapter is that the student understands the basic concepts
 <div class="sect2">
 <h3 id="_introduction">Introduction</h3>
 <div class="paragraph">
-<p>The Open Container Initiative or OCI defines an open source initiative for container runtime and image specifications. The initiative dates back to 2015, it was stablished by Docker and other leaders in the containers industry, nowadays it is supported by the Linux Foundation.</p>
+<p>The Open Container Initiative or OCI defines an open source initiative for container runtime and image specifications. The initiative dates back to 2015, it was established by Docker and other leaders in the containers industry, nowadays it is supported by the Linux Foundation.</p>
 </div>
 <div class="paragraph">
 <p>This initiative is relevant for the reason that it was first stablished to set a base for container standards definition. As other industry standards such as HTTP it is build on top of open source.</p>
@@ -684,7 +684,7 @@ The filesystem is in a bundle which means that it needs to be unpacked.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Buildah supports Docker based image build. This characteristic makes it posible to run in a Docker environment a Buildah builded OCI container image. This compatibility turns OCI and it&#8217;s set of tools into a very powerful way of defining container images and it also comes with a lot of flexibility.
+Buildah supports Docker based image build. This characteristic makes it posible to run in a Docker environment a Buildah built OCI container image. This compatibility turns OCI and it&#8217;s set of tools into a very powerful way of defining container images and it also comes with a lot of flexibility.
 </td>
 </tr>
 </table>
@@ -904,7 +904,7 @@ sudo docker run hello-world <i class="conum" data-value="7"></i><b>(7)</b></code
 <p>For building and running container images in Docker there are two commands <code>docker build</code> and <code>docker run</code> respectively.</p>
 </div>
 <div class="paragraph">
-<p>When Docker builds a container image it takes the Dockerfile and a set of other files also known as context. The Docker build command can use the context files as a reference. The Dockerfile specifies the assembly of the filesystem for the container image and optional metadata describing the way it must be runned.</p>
+<p>When Docker builds a container image it takes the Dockerfile and a set of other files also known as context. The Docker build command can use the context files as a reference. The Dockerfile specifies the assembly of the filesystem for the container image and optional metadata describing the way it must be run.</p>
 </div>
 <div class="paragraph">
 <p>When <code>docker build</code> is executed a new container is created to process the Dockerfile, this creates new metadata.</p>
@@ -943,7 +943,7 @@ sudo docker container run --detach -p 80:80 linux_tweet_app <i class="conum" dat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>For this sample the easiest way to get started is with an application and it&#8217;s Dockerfile. This is not a Hands on Lab, this is to demostrate how Docker container application is builded and runned, so what is needed to do is to have an application in the fist place. A sample application available in the Docker Samples GitHub site <a href="#di">[2]</a> is used as a container application. First, clone the application from the Git repository, make sure to do this in a new directory.</td>
+<td>For this sample the easiest way to get started is with an application and it&#8217;s Dockerfile. This is not a Hands on Lab, this is to demostrate how Docker container application is built and run, so what is needed to do is to have an application in the fist place. A sample application available in the Docker Samples GitHub site <a href="#di">[2]</a> is used as a container application. First, clone the application from the Git repository, make sure to do this in a new directory.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -969,7 +969,7 @@ sudo docker container run --detach -p 80:80 linux_tweet_app <i class="conum" dat
 <p>There is a difference is that it is not a daemon as Docker or Podman and when building Buildah the user has the opportunity to create an empty image and start from zero instead of creating an image based on another container, this also means reduced image size, increased security because it does not packages default libraries, as described in the Red Hat Documentation for Buidah.<a href="#rhdocs">[4]</a></p>
 </div>
 <div class="paragraph">
-<p>Buildah installation varies between Linux distributions which can be found in in the Buildah installation reference <a href="#bir">[bir]</a>.</p>
+<p>Buildah installation varies between Linux distributions which can be found in in the Buildah installation reference <a href="#bir">[5]</a>.</p>
 </div>
 <div class="paragraph">
 <p>For this chapter the installation instructions will focus on Ubuntu 18.04.</p>
@@ -983,13 +983,13 @@ sudo docker container run --detach -p 80:80 linux_tweet_app <i class="conum" dat
 
 sudo sh -c "echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/x${ID^}_${VERSION_ID}/ /' &gt; /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list" <i class="conum" data-value="2"></i><b>(2)</b>
 
-wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${ID^}_${VERSION_ID}/Release.key -O Release.key
+wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${ID^}_${VERSION_ID}/Release.key -O Release.key <i class="conum" data-value="3"></i><b>(3)</b>
 
-sudo apt-key add - &lt; Release.key
+sudo apt-key add - &lt; Release.key <i class="conum" data-value="4"></i><b>(4)</b>
 
-sudo apt-get update -qq
+sudo apt-get update -qq <i class="conum" data-value="5"></i><b>(5)</b>
 
-sudo apt-get -qq -y install buildah</pre>
+sudo apt-get -qq -y install buildah <i class="conum" data-value="6"></i><b>(6)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1113,7 +1113,7 @@ RunC is the container format and runtime provided by Docker as the base for the 
 <p><a id="rhdocs"></a>[4] Chapter 6. Building container images with Buildah. Red Hat Customer Portal. 2020. Available at: <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/building_running_and_managing_containers/building-container-images-with-buildah_building-running-and-managing-containers" class="bare">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/building_running_and_managing_containers/building-container-images-with-buildah_building-running-and-managing-containers</a></p>
 </li>
 <li>
-<p><a id="rundocs"></a>[5] Installation Instructions. buildah. GitHub. 2020. Available at: <a href="https://github.com/containers/buildah/blob/master/install.md" class="bare">https://github.com/containers/buildah/blob/master/install.md</a></p>
+<p><a id="bir"></a>[5] Installation Instructions. buildah. GitHub. 2020. Available at: <a href="https://github.com/containers/buildah/blob/master/install.md" class="bare">https://github.com/containers/buildah/blob/master/install.md</a></p>
 </li>
 <li>
 <p>About the Open Container Initiative. From the Linux Foundation. 2020. Available at: <a href="https://opencontainers.org/about/overview/" class="bare">https://opencontainers.org/about/overview/</a></p>
@@ -1165,7 +1165,7 @@ RunC is the container format and runtime provided by Docker as the base for the 
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2020-07-06 00:39:54 -0500
+Last updated 2020-07-07 00:20:35 -0500
 </div>
 </div>
 </body>
